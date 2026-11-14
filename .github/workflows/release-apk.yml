@@ -1,0 +1,28 @@
+name: Release APK
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/release-apk.yml'
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/*.apk SalsalDrive.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0
+          name: 살살 드라이브 v1.0 (공모전 제출본)
+          body: Pleos Connect 에뮬레이터(API 34)에 설치해 실행하는 APK입니다.
+          files: SalsalDrive.apk
